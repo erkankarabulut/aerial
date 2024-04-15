@@ -1,0 +1,9 @@
+mlxtend==0.23.1
+pandas==2.2.1
+numpy==1.26.4
+niapy~=2.1.0
+niaarm==0.3.7
+pami==2024.3.24.1
+ucimlrepo==0.0.6
+torch==2.2.2
+PyYAML~=6.0.1
