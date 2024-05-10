@@ -19,6 +19,16 @@ def prepare_classic_arm_input(dataset):
     return processed
 
 
+def prepare_opt_arm_input(dataset):
+    opt_arm_input = []
+    for index, row in dataset.data.features.iterrows():
+        new_row = {}
+        for row_index, item in row.items():
+            new_row[row_index] = row_index + "__" + str(item)
+        opt_arm_input.append(pd.Series(new_row))
+    new_input = pd.DataFrame(opt_arm_input)
+    return new_input
+
 def one_hot_encoding(categorical_dataset):
     te = TransactionEncoder()
     te_ary = te.fit(categorical_dataset).transform(categorical_dataset)

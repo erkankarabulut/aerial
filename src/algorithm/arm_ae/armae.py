@@ -14,9 +14,10 @@ import time
 
 
 class ARMAE:
-    def __init__(self, dataSize, learningRate=1e-3, maxEpoch=10,
+    def __init__(self, dataSize, learningRate=1e-3, maxEpoch=5,
                  batchSize=128, hiddenSize='dataSize', likeness=0.4, columns=[], isLoadedModel=False,
                  IM=['support', 'confidence']):
+        self.arm_ae_training_time = 0
         self.exec_time = None
         self.dataSize = dataSize
         self.learningRate = learningRate
@@ -53,7 +54,7 @@ class ARMAE:
         self.model.load(encoderPath, decoderPath)
 
     def train(self, dataLoader):
-
+        armae_training_start = time.time()
         for epoch in range(self.maxEpoch):
             for data in dataLoader:
                 d = Variable(data)
@@ -68,8 +69,7 @@ class ARMAE:
 
             # print('epoch [{}/{}], loss:{:.4f}'
             #       .format(epoch + 1, self.maxEpoch, loss.data))
-
-        return epoch
+        self.arm_ae_training_time = time.time() - armae_training_start
 
     def computeMeasures(self, antecedent, consequent, data):
         measures = []
@@ -148,7 +148,7 @@ class ARMAE:
                     timeCreatingRule += t2 - t1
                     timeComputingMeasure += t3 - t2
 
-        self.exec_time = timeCreatingRule
+        self.exec_time = timeCreatingRule + self.arm_ae_training_time
 
     def reformat_rules(self, data, data_columns):
         """

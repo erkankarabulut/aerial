@@ -5,7 +5,7 @@ from statistics import mean
 
 def get_coverage_false_positives(ground_truth, test):
     """
-    coverage and false positives of AE SemRL according to the ground truth (FP-Growth)
+    coverage and false positives of AE ARL according to the ground truth (FP-Growth)
     """
     if len(ground_truth) == 0:
         return 1, len(test)
@@ -46,7 +46,7 @@ def get_coverage_false_positives(ground_truth, test):
 
 def evaluate_rules(association_rules):
     """
-    average support, confidence, lift, conviction, leverage and zhangs_metric value of the rules found by AE SemRL
+    average support, confidence, lift, conviction, leverage and zhangs_metric value of the rules found by AE ARL
     """
     support_list = []
     confidence_list = []

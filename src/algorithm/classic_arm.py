@@ -24,17 +24,17 @@ class ClassicARM:
             frq_items = fpgrowth(one_hot_encoded_input, self.min_support, use_colnames=True)
         else:
             frq_items = hmine(one_hot_encoded_input, self.min_support, use_colnames=True)
-
+        print("frequent items:", len(frq_items))
         if len(frq_items) == 0:
-            return None
+            return None, None
 
         rules = association_rules(frq_items, metric="confidence", min_threshold=self.min_confidence)
         exec_time = time.time() - start
 
         if len(rules) > 0:
-            return self.calculate_stats(rules, exec_time, dataset)
+            return self.calculate_stats(rules, exec_time, dataset), rules
         else:
-            return None
+            return None, None
 
     @staticmethod
     def calculate_stats(rules, exec_time, dataset):

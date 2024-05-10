@@ -6,15 +6,15 @@ import copy
 
 from itertools import chain, combinations
 from torch import nn
-from src.algorithm.ae_semrl.autoencoder import AutoEncoder
+from src.algorithm.aerial.autoencoder import AutoEncoder
 from src.preprocessing.ucimlrepo import *
 from src.util.rule_quality import *
 import numpy as np
 
 
-class AESemRL:
+class Aerial:
     """
-    AutoEncoder-based SEMantic Association Rule Learning (AE SemRL) implementation
+    AutoEncoder-based SEMantic Association Rule Learning (AE ARL) implementation
     """
 
     def __init__(self, noise_factor=0.5, similarity_threshold=0.8, max_antecedents=2):
@@ -68,7 +68,7 @@ class AESemRL:
 
     def generate_rules(self):
         """
-        generate rules using the AE SemRL algorithm
+        generate rules using the AE ARL algorithm
         """
         association_rules = []
         input_vector_size = len(self.input_vectors['vector_tracker_list'])
@@ -94,7 +94,15 @@ class AESemRL:
                             prob_index >= category_list[0]['end'] or prob_index < category_list[0]['start']):
                         # make sure that if the rule has 1 antecedent, then it shouldn't imply itself
                         continue
-                    if implication_probabilities[prob_index] >= self.similarity_threshold:
+                    if len(category_list) > 1:
+                        self_implication = False
+                        for temp_cat in category_list:
+                            if temp_cat['start'] <= prob_index < temp_cat['end']:
+                                self_implication = True
+                                break
+                        if self_implication:
+                            continue
+                    elif implication_probabilities[prob_index] >= self.similarity_threshold:
                         consequent_list.append(prob_index)
                 if len(consequent_list) > 0:
                     antecedent_list = [index for index in range(len(test_vector)) if test_vector[index] == 1]
@@ -285,11 +293,12 @@ class AESemRL:
         # pretrain categorical attributes from the knowledge graph, to create a numerical representation for them
         self.model = AutoEncoder(len(self.input_vectors['vector_list'][0]))
 
-        if not self.model.load("test"):
-            self.train_ae_model()
-            # self.model.save("test")
+        # if not self.model.load("test"):
+        training_time = self.train_ae_model()
+        # self.model.save("test")
+        return training_time
 
-    def train_ae_model(self, loss_function=torch.nn.BCELoss(), lr=1e-4, epochs=5):
+    def train_ae_model(self, loss_function=torch.nn.BCELoss(), lr=5e-3, epochs=5):
         """
         train the encoder on the semantically enriched transaction dataset
         """
@@ -297,6 +306,7 @@ class AESemRL:
         vectors = self.input_vectors['vector_list']
         random.shuffle(vectors)
 
+        training_start_time = time.time()
         for epoch in range(epochs):
             for index in range(len(vectors)):
                 print("Training progress:", (index + 1 + (epoch * len(vectors))), "/", (len(vectors) * epochs),
@@ -316,3 +326,5 @@ class AESemRL:
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
+        training_time = time.time() - training_start_time
+        return training_time
