@@ -1,6 +1,6 @@
 # Algorithm PARAMETERS
 # Classical ARM
-MIN_SUPPORT: 0.04
+MIN_SUPPORT: 0.068
 MIN_CONFIDENCE: 0.8
 
 # Optimization-based ARM
@@ -23,4 +23,4 @@ LEARNING_RATE: 1e-4
 NUMBER_OF_ANTECEDENTS: 2
 
 # Generic
-NUM_OF_RUNS: 6
+NUM_OF_RUNS: 12

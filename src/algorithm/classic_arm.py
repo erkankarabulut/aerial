@@ -31,10 +31,19 @@ class ClassicARM:
         rules = association_rules(frq_items, metric="confidence", min_threshold=self.min_confidence)
         exec_time = time.time() - start
 
-        if len(rules) > 0:
-            return self.calculate_stats(rules, exec_time, dataset), rules
-        else:
+        if len(rules) == 0:
             return None, None
+
+        rule_stats = self.calculate_stats(rules, exec_time, dataset)
+        reformatted_rules = self.reformat_rules(rules)
+        return rule_stats, reformatted_rules
+
+    def reformat_rules(self, rules):
+        reformatted_rules = []
+        for rule_index, rule in rules.iterrows():
+            new_rule = {'antecedents': list(rule['antecedents']), 'consequent': list(rule['consequents'])}
+            reformatted_rules.append(new_rule)
+        return reformatted_rules
 
     @staticmethod
     def calculate_stats(rules, exec_time, dataset):

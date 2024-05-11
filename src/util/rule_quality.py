@@ -72,3 +72,21 @@ def calculate_zhangs_metric(support, support_ant, support_cons):
             + 2.220446049250313e-16
     )
     return numerator / denominator
+
+
+def calculate_rule_overlap(results):
+    overlap_list = {}
+    for dataset in results:
+        for algorithm in results[dataset]:
+            overlap_list[algorithm] = {}
+            for algorithm2 in results[dataset]:
+                if algorithm == algorithm2:
+                    continue
+                match = 0
+                for rule in results[dataset][algorithm]['rules']:
+                    for rule2 in results[dataset][algorithm2]['rules']:
+                        if set(rule["antecedents"]) == set(rule2["antecedents"]) and \
+                                set(rule["consequent"]) == set(rule2["consequent"]):
+                            match += 1
+                overlap_list[algorithm][algorithm2] = match / len(results[dataset][algorithm]['rules'])
+    print(overlap_list)

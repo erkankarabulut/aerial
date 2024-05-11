@@ -25,7 +25,7 @@ class OptimizationARM:
         support, confidence, lift, zhangs, interestingness, yulesq = \
             rules.mean("support"), rules.mean("confidence"), rules.mean("lift"), rules.mean("zhang"), \
                 rules.mean("interestingness"), rules.mean("yulesq")
-        # rules = self.reformat_rules(rules)
+        rules = self.reformat_rules(rules)
         return [len(rules), run_time, support, confidence, lift, zhangs, coverage, interestingness, yulesq], rules
 
     @staticmethod
@@ -56,5 +56,11 @@ class OptimizationARM:
     def reformat_rules(self, rules):
         reformatted_rules = []
         for rule in rules:
-            print(rule)
+            antecedents = []
+            consequent = []
+            for item in rule.antecedent:
+                antecedents += item.categories
+            for item in rule.consequent:
+                consequent += item.categories
+            reformatted_rules.append({"antecedents": antecedents, "consequent": consequent})
         return reformatted_rules

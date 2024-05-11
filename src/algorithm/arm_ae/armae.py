@@ -213,4 +213,4 @@ class ARMAE:
         stats = calculate_average_rule_quality(formatted_rules)
         stats["coverage"] = sum(rule_coverage) / len(data)
         return [len(formatted_rules), self.exec_time, stats['support'], stats["confidence"], stats["lift"],
-                stats["zhangs_metric"], stats["coverage"], stats["interestingness"], stats["yulesq"]]
+                stats["zhangs_metric"], stats["coverage"], stats["interestingness"], stats["yulesq"]], formatted_rules

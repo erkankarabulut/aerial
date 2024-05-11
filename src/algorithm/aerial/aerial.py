@@ -90,19 +90,14 @@ class Aerial:
                     "feature_value_indices"]).detach().numpy().tolist()
                 consequent_list = []
                 for prob_index in range(len(implication_probabilities)):
-                    if len(category_list) == 1 and not (
-                            prob_index >= category_list[0]['end'] or prob_index < category_list[0]['start']):
-                        # make sure that if the rule has 1 antecedent, then it shouldn't imply itself
+                    self_implication = False
+                    for temp_cat in category_list:
+                        if temp_cat['start'] <= prob_index < temp_cat['end']:
+                            self_implication = True
+                            break
+                    if self_implication:
                         continue
-                    if len(category_list) > 1:
-                        self_implication = False
-                        for temp_cat in category_list:
-                            if temp_cat['start'] <= prob_index < temp_cat['end']:
-                                self_implication = True
-                                break
-                        if self_implication:
-                            continue
-                    elif implication_probabilities[prob_index] >= self.similarity_threshold:
+                    if implication_probabilities[prob_index] >= self.similarity_threshold:
                         consequent_list.append(prob_index)
                 if len(consequent_list) > 0:
                     antecedent_list = [index for index in range(len(test_vector)) if test_vector[index] == 1]
@@ -122,7 +117,7 @@ class Aerial:
             rule = association_rules[rule_index]
             deconstructed_rule = self.get_deconstructed_rule(rule['antecedents'], rule['consequent'])
             association_rules[rule_index]['antecedents'] = deconstructed_rule['antecedents']
-            association_rules[rule_index]['consequent'] = deconstructed_rule['consequent']
+            association_rules[rule_index]['consequent'] = [deconstructed_rule['consequent']]
             association_rules[rule_index]['consequent_index'] = deconstructed_rule['consequent_index']
         return association_rules
 
@@ -178,6 +173,8 @@ class Aerial:
             rule["yulesq"] = calculate_yulesq(co_occurrence_count, no_ant_no_cons_count,
                                               only_consequence_occurrence_count,
                                               only_antecedence_occurrence_count)
+            # just to make each rule in the same form, the other algorithms have the consequent as in a list form
+            rule["consequent"] = [rule["consequent"]]
 
         if len(rules) == 0:
             return None
@@ -298,7 +295,7 @@ class Aerial:
         # self.model.save("test")
         return training_time
 
-    def train_ae_model(self, loss_function=torch.nn.BCELoss(), lr=5e-3, epochs=5):
+    def train_ae_model(self, loss_function=torch.nn.BCELoss(), lr=5e-3, epochs=20):
         """
         train the encoder on the semantically enriched transaction dataset
         """
