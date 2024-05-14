@@ -20,7 +20,7 @@ class OptimizationARM:
         rules, run_time = get_rules(dataset, algorithm=self.algorithm, metrics=self.metrics,
                                     max_evals=self.max_evals, logging=False)
         if len(rules) == 0:
-            return False
+            return False, False
         coverage = self.calculate_coverage(rules, transactions)
         support, confidence, lift, zhangs, interestingness, yulesq = \
             rules.mean("support"), rules.mean("confidence"), rules.mean("lift"), rules.mean("zhang"), \
