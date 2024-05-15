@@ -1,4 +1,4 @@
-# Adapted from: https://github.com/DiTEC-project/semantic-association-rule-learning
+# Aerial source code is inspired from AE SemRL: https://github.com/DiTEC-project/semantic-association-rule-learning
 
 import torch
 import os
@@ -20,18 +20,14 @@ class AutoEncoder(nn.Module):
         self.encoder = nn.Sequential(
             nn.Linear(self.data_size, int(1 * self.data_size / 2)),
             nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 2), int(1 * self.data_size / 4)),
+            nn.Linear(int(1 * self.data_size / 2), int(1 * self.data_size / 8)),
             nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 4), int(1 * self.data_size / 16)),
-            nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 16), int(1 * self.data_size / 32)),
+            nn.Linear(int(1 * self.data_size / 8), int(1 * self.data_size / 16)),
         )
         self.decoder = nn.Sequential(
-            nn.Linear(int(1 * self.data_size / 32), int(1 * self.data_size / 16)),
+            nn.Linear(int(1 * self.data_size / 16), int(1 * self.data_size / 8)),
             nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 16), int(1 * self.data_size / 4)),
-            nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 4), int(1 * self.data_size / 2)),
+            nn.Linear(int(1 * self.data_size / 8), int(1 * self.data_size / 2)),
             nn.Tanh(),
             nn.Linear(int(1 * self.data_size / 2), self.data_size)
         )

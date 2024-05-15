@@ -20,7 +20,8 @@ warnings.filterwarnings("ignore")
 
 
 def print_stats(algorithm, stats_array):
-    print("count,time,support,confidence,lift,zhang,coverage,interestingness,yulesq\n"
+    print("Results for the algorithm:", algorithm)
+    print("count,time,support,confidence,lift,zhang,coverage,interestingness,yulesq: "
           "(%.f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f)" %
           (stats_array[0], stats_array[1], stats_array[2], stats_array[3], stats_array[4], stats_array[5],
            stats_array[6], stats_array[7], stats_array[8]))
@@ -33,13 +34,13 @@ def get_datasets():
     datasets = []
 
     print("Loading the datasets ...")
-    # hayes_roth = fetch_ucirepo(id=44)
-    # solar_flare = fetch_ucirepo(id=89)
+    hayes_roth = fetch_ucirepo(id=44)
+    solar_flare = fetch_ucirepo(id=89)
     breast_cancer = fetch_ucirepo(id=14)
-    # congress_voting_records = fetch_ucirepo(id=105)
-    # mushroom = fetch_ucirepo(id=73)
+    congress_voting_records = fetch_ucirepo(id=105)
+    mushroom = fetch_ucirepo(id=73)
 
-    datasets += [breast_cancer]
+    datasets += [hayes_roth]
     print("Following datasets are loaded:", [dataset.metadata.name for dataset in datasets])
 
     return datasets
@@ -95,10 +96,10 @@ if __name__ == '__main__':
 
         # optimization-based ARM
 
-        # Run all 5 optimization-based ARM algorithms in parallel. Running one algorithm 'NUM_OF_RUNS' times in
+        # Run all 4 optimization-based ARM algorithms in parallel. Running one algorithm 'NUM_OF_RUNS' times in
         # parallel results in the same rules, therefore, we parallelize running different algorithms at the same
         # time. Also, we need to re-create algorithm instances to avoid having the same results in each run
-        pool = Pool(12)
+        pool = Pool(10)
         tasks = []
         for index in range(params['NUM_OF_RUNS']):
             tasks.append(
@@ -113,7 +114,7 @@ if __name__ == '__main__':
             tasks.append(
                 (optimization_based_arm_input, OptimizationARM(FishSchoolSearch(params['INIT_POPULATION_SIZE']),
                                                                max_evals=params['MAX_EVALS'])))
-        #
+
         stats = pool.map(execute, tasks)
         for index in range(len(stats)):
             if stats[index][0]:
@@ -129,7 +130,7 @@ if __name__ == '__main__':
                 if index % 4 == 3:
                     results[dataset.metadata.name]["fss"]["stats"].append(stats[index][0])
                     results[dataset.metadata.name]["fss"]["rules"] = stats[index][1]
-        #
+
         pool.close()
         pool.join()
 
@@ -151,7 +152,7 @@ if __name__ == '__main__':
         dataLoader = arm_ae.dataPreprocessing(one_hot_encoded)
         arm_ae_training_time = arm_ae.train(dataLoader)
         arm_ae.generateRules(one_hot_encoded,
-                             numberOfRules=int(len(aerial_association_rules) / one_hot_encoded.shape[1]),
+                             numberOfRules=max(int(len(aerial_association_rules) / one_hot_encoded.shape[1]), 2),
                              nbAntecedent=params["NUMBER_OF_ANTECEDENTS"])
         arm_ae_stats, arm_ae_rules = arm_ae.reformat_rules(classical_arm_input, list(one_hot_encoded.columns))
         if arm_ae_stats:
@@ -167,9 +168,10 @@ if __name__ == '__main__':
                  "Interestingness", "Yules'Q"])
             for algorithm in results[dataset]:
                 if results[dataset][algorithm]['stats'] and len(results[dataset][algorithm]['stats']) > 0:
-                    row = print_stats(algorithm, max(results[dataset][algorithm]["stats"], key=lambda x: x[3]))
+                    # row = print_stats(algorithm, max(results[dataset][algorithm]["stats"], key=lambda x: x[3]))
+                    row = print_stats(algorithm, pd.DataFrame(results[dataset][algorithm]["stats"]).mean())
                 else:
                     row = [algorithm, "No rules found!"]
                 writer.writerow(row)
-
+        print("The results are saved into 'results.csv' file.")
     calculate_rule_overlap(results)

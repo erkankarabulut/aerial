@@ -83,10 +83,12 @@ def calculate_rule_overlap(results):
                 if algorithm == algorithm2:
                     continue
                 match = 0
-                for rule in results[dataset][algorithm]['rules']:
-                    for rule2 in results[dataset][algorithm2]['rules']:
-                        if set(rule["antecedents"]) == set(rule2["antecedents"]) and \
-                                set(rule["consequent"]) == set(rule2["consequent"]):
-                            match += 1
-                overlap_list[algorithm][algorithm2] = match / len(results[dataset][algorithm]['rules'])
-    print(overlap_list)
+                if results[dataset][algorithm]['rules'] and len(results[dataset][algorithm]['rules']) > 0 and \
+                        results[dataset][algorithm2]['rules'] and len(results[dataset][algorithm2]['rules']) > 0:
+                    for rule in results[dataset][algorithm]['rules']:
+                        for rule2 in results[dataset][algorithm2]['rules']:
+                            if set(rule["antecedents"]) == set(rule2["antecedents"]) and \
+                                    set(rule["consequent"]) == set(rule2["consequent"]):
+                                match += 1
+                    overlap_list[algorithm][algorithm2] = match / len(results[dataset][algorithm]['rules'])
+    print("Rule overlaps:", overlap_list)

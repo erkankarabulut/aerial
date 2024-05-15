@@ -1,12 +1,10 @@
 from niaarm import get_rules, Dataset
-from niapy.algorithms.basic import HarrisHawksOptimization
-import pandas as pd
 import numpy as np
 
 
 class OptimizationARM:
     """
-    An implementation of single-objective optimization-based ARM algorithms using NiaARM and NiaPy packages
+    An implementation of optimization-based ARM algorithms using NiaARM and NiaPy packages
     """
 
     def __init__(self, algorithm, max_evals=50000):

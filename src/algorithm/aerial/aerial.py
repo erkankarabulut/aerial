@@ -1,3 +1,4 @@
+# Aerial source code is inspired from AE SemRL: https://github.com/DiTEC-project/semantic-association-rule-learning
 import random
 import time
 
@@ -14,7 +15,7 @@ import numpy as np
 
 class Aerial:
     """
-    AutoEncoder-based SEMantic Association Rule Learning (AE ARL) implementation
+    AutoEncoder-based Association Rule Learning (Aerial) implementation
     """
 
     def __init__(self, noise_factor=0.5, similarity_threshold=0.8, max_antecedents=2):
@@ -108,18 +109,6 @@ class Aerial:
 
         execution_time = time.time() - start
         return association_rules, execution_time
-
-    def reformat_rules(self, association_rules):
-        """
-        convert given association rules from vector format to text
-        """
-        for rule_index in range(len(association_rules)):
-            rule = association_rules[rule_index]
-            deconstructed_rule = self.get_deconstructed_rule(rule['antecedents'], rule['consequent'])
-            association_rules[rule_index]['antecedents'] = deconstructed_rule['antecedents']
-            association_rules[rule_index]['consequent'] = [deconstructed_rule['consequent']]
-            association_rules[rule_index]['consequent_index'] = deconstructed_rule['consequent_index']
-        return association_rules
 
     def calculate_stats(self, rules, transactions, exec_time):
         """
@@ -227,62 +216,6 @@ class Aerial:
 
         return rule
 
-    @staticmethod
-    def get_deconstructed_rule(antecedents, consequent):
-        """
-        convert rules in the vector form back into string form
-        """
-        rule = {'antecedents': [], 'consequent': None}
-        groups = {}
-        unique_item_list = []
-        item_index = -1
-        for antecedent in antecedents:
-            # item indices (items refers a sensor measurement together with associated semantics) are marked with
-            # "_item_" string
-            split_antecedent = antecedent.split('_item_')
-            if split_antecedent[1] not in unique_item_list:
-                unique_item_list.append(split_antecedent[1])
-                item_index += 1
-                groups[str(item_index)] = []
-            groups[str(item_index)].append(split_antecedent[0])
-
-        for key in groups:
-            antecedent = {}
-            for sub_item in groups[key]:
-                if sub_item.startswith('sensor'):
-                    # measurement aspect (e.g. water pressure, water flow rate) is stored in measurement_aspect
-                    # property, while its range is stored in "measurement_range" property, which are marked in the
-                    # vector_tracker_list with "_type_" and "_end_" keys.
-                    antecedent['measurement_aspect'] = sub_item.split('_type_')[1].split('_end_')[0]
-                    antecedent['measurement_range'] = sub_item.split('_range_')[1].split('_end_')[0]
-                else:
-                    split_item = sub_item.split('_')
-                    antecedent[split_item[0]] = '_'.join(split_item[1:])
-
-            rule['antecedents'].append(antecedent)
-
-        split_consequent = consequent.split('_item_')
-        if split_consequent[1] in groups:
-            postfix = int(split_consequent[1])
-        else:
-            postfix = item_index + 1
-
-        formatted_consequent = {}
-        if consequent.startswith('sensor'):
-            formatted_consequent['measurement_aspect'] = consequent.split('_type_')[1].split('_end_')[0]
-            formatted_consequent['measurement_range'] = consequent.split('_range_')[1].split('_end_')[0]
-        else:
-            split_item = split_consequent[0].split("_")
-            formatted_consequent[split_item[0]] = '_'.join(split_item[1:])
-
-        # if the items in the consequent corresponds to one of the antecedents, then mark this with consequent_index
-        # e.g. if a.feature1 & b.feature1 --> a.feature2, then antecedents = [a.feature1, b.feature1]
-        # and consequent_index = 1
-        rule['consequent_index'] = postfix
-        rule['consequent'] = formatted_consequent
-
-        return rule
-
     def train(self):
         """
         train the autoencoder
@@ -295,9 +228,9 @@ class Aerial:
         # self.model.save("test")
         return training_time
 
-    def train_ae_model(self, loss_function=torch.nn.BCELoss(), lr=5e-3, epochs=20):
+    def train_ae_model(self, loss_function=torch.nn.BCELoss(), lr=5e-3, epochs=5):
         """
-        train the encoder on the semantically enriched transaction dataset
+        train the encoder on the given dataset
         """
         optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=2e-8)
         vectors = self.input_vectors['vector_list']

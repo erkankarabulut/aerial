@@ -1,11 +1,8 @@
 import numpy as np
-import pandas as pd
 import time
 from src.util.rule_quality import *
 from src.preprocessing.ucimlrepo import *
-from PAMI.frequentPattern.basic import ECLAT
 from mlxtend.frequent_patterns import association_rules
-from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import fpgrowth, hmine
 
 
@@ -17,14 +14,12 @@ class ClassicARM:
 
     def mine_rules(self, dataset):
         one_hot_encoded_input = one_hot_encoding(dataset)
-        print("One-hot encoded feature count:", len(list(one_hot_encoded_input.columns)))
         start = time.time()
 
         if self.algorithm == "fpgrowth":
             frq_items = fpgrowth(one_hot_encoded_input, self.min_support, use_colnames=True)
         else:
             frq_items = hmine(one_hot_encoded_input, self.min_support, use_colnames=True)
-        print("frequent items:", len(frq_items))
         if len(frq_items) == 0:
             return None, None
 

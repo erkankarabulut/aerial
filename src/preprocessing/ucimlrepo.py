@@ -29,6 +29,7 @@ def prepare_opt_arm_input(dataset):
     new_input = pd.DataFrame(opt_arm_input)
     return new_input
 
+
 def one_hot_encoding(categorical_dataset):
     te = TransactionEncoder()
     te_ary = te.fit(categorical_dataset).transform(categorical_dataset)
