@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore")
 
 def print_stats(algorithm, stats_array):
     print("Results for the algorithm:", algorithm)
-    print("count,time,support,confidence,lift,zhang,coverage,interestingness,yulesq: "
+    print("(rule count, execution time (s), support, confidence, lift, zhang, coverage, interestingness, yulesq): "
           "(%.f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f)" %
           (stats_array[0], stats_array[1], stats_array[2], stats_array[3], stats_array[4], stats_array[5],
            stats_array[6], stats_array[7], stats_array[8]))
@@ -40,7 +40,7 @@ def get_datasets():
     congress_voting_records = fetch_ucirepo(id=105)
     mushroom = fetch_ucirepo(id=73)
 
-    datasets += [hayes_roth]
+    datasets += [hayes_roth, solar_flare, breast_cancer, congress_voting_records, mushroom]
     print("Following datasets are loaded:", [dataset.metadata.name for dataset in datasets])
 
     return datasets
@@ -168,8 +168,8 @@ if __name__ == '__main__':
                  "Interestingness", "Yules'Q"])
             for algorithm in results[dataset]:
                 if results[dataset][algorithm]['stats'] and len(results[dataset][algorithm]['stats']) > 0:
-                    # row = print_stats(algorithm, max(results[dataset][algorithm]["stats"], key=lambda x: x[3]))
-                    row = print_stats(algorithm, pd.DataFrame(results[dataset][algorithm]["stats"]).mean())
+                    row = print_stats(algorithm, max(results[dataset][algorithm]["stats"], key=lambda x: x[3]))
+                    # row = print_stats(algorithm, pd.DataFrame(results[dataset][algorithm]["stats"]).mean())
                 else:
                     row = [algorithm, "No rules found!"]
                 writer.writerow(row)

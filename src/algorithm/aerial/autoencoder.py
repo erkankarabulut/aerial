@@ -16,18 +16,17 @@ class AutoEncoder(nn.Module):
         """
         super().__init__()
         self.data_size = data_size
-        print("Data size: ", data_size)
         self.encoder = nn.Sequential(
             nn.Linear(self.data_size, int(1 * self.data_size / 2)),
             nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 2), int(1 * self.data_size / 8)),
+            nn.Linear(int(1 * self.data_size / 2), int(1 * self.data_size / 4)),
             nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 8), int(1 * self.data_size / 16)),
+            nn.Linear(int(1 * self.data_size / 4), int(1 * self.data_size / 32)),
         )
         self.decoder = nn.Sequential(
-            nn.Linear(int(1 * self.data_size / 16), int(1 * self.data_size / 8)),
+            nn.Linear(int(1 * self.data_size / 32), int(1 * self.data_size / 4)),
             nn.Tanh(),
-            nn.Linear(int(1 * self.data_size / 8), int(1 * self.data_size / 2)),
+            nn.Linear(int(1 * self.data_size / 4), int(1 * self.data_size / 2)),
             nn.Tanh(),
             nn.Linear(int(1 * self.data_size / 2), self.data_size)
         )
