@@ -7,6 +7,10 @@ from mlxtend.frequent_patterns import fpgrowth, hmine
 
 
 class ClassicARM:
+    """
+    This class implements classical ARM approaches (FP-Growth and HMine) using the Mlxtend Python package
+    """
+
     def __init__(self, min_support, min_confidence, algorithm):
         self.min_support = min_support
         self.min_confidence = min_confidence

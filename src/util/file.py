@@ -1,3 +1,7 @@
+"""
+This script implements helper functions relevant to file operations
+"""
+
 import yaml
 
 

@@ -1,3 +1,7 @@
+"""
+This script includes helper functions for processing UCI ML repository datasets
+"""
+
 import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 

@@ -1,4 +1,5 @@
 # this script is taken from https://github.com/TheophileBERTELOOT/ARM-AE/blob/master/AutoEncoder.py.
+
 import torch
 from torch import nn, optim
 from torch.autograd import Variable

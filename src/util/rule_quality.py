@@ -1,3 +1,7 @@
+"""
+This script implements helper functions relevant to logical association rule quality metrics
+"""
+
 import pandas as pd
 
 

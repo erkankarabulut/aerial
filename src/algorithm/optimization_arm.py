@@ -4,7 +4,7 @@ import numpy as np
 
 class OptimizationARM:
     """
-    An implementation of optimization-based ARM algorithms using NiaARM and NiaPy packages
+    This class implements the optimization-based ARM approaches (BAT, GWO, SC, FSS), using NiaARM and NiaPY packages
     """
 
     def __init__(self, algorithm, max_evals=50000):

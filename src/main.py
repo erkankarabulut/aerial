@@ -1,13 +1,15 @@
-import time
+"""
+This script is the entry point to all of the experiments carried out as part of the Aerial project
+"""
+
 import warnings
 import csv
 
 from ucimlrepo import fetch_ucirepo
 from algorithm.optimization_arm import OptimizationARM
 from algorithm.classic_arm import ClassicARM
-from niapy.algorithms.basic import HarrisHawksOptimization, BatAlgorithm, SineCosineAlgorithm, GreyWolfOptimizer, \
-    MothFlameOptimizer, DifferentialEvolution, ParticleSwarmOptimization, ArtificialBeeColonyAlgorithm, \
-    FishSchoolSearch, MonarchButterflyOptimization
+from niapy.algorithms.basic import BatAlgorithm, SineCosineAlgorithm, GreyWolfOptimizer, \
+    FishSchoolSearch
 from preprocessing.ucimlrepo import *
 from src.algorithm.aerial.aerial import Aerial
 from src.algorithm.arm_ae.armae import ARMAE

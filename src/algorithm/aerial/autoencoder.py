@@ -1,5 +1,3 @@
-# Aerial source code is inspired from AE SemRL: https://github.com/DiTEC-project/semantic-association-rule-learning
-
 import torch
 import os
 from torch import nn
